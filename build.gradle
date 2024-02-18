@@ -1,22 +1,33 @@
-import java.time.Instant
-
 plugins {
-  id /*net.fabricmc.*/ "fabric-loom" version "0.12.51"
+  id "fabric-loom" version "1.5-SNAPSHOT"
   id "net.nemerosa.versioning" version "3.0.0"
   id "org.gradle.signing"
 }
 
-group = "dev.sapphic"
-version = "1.0.0"
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archivesBaseName
+}
 
 java {
   withSourcesJar()
 }
 
 loom {
-  accessWidenerPath.set(file(".accesswidener"))
+  splitEnvironmentSourceSets()
 
-  mixin {
+  mods {
+    group {
+      sourceSet sourceSets.main
+      sourceSet sourceSets.client
+    }
+  }
+
+  //accessWidenerPath.set(file(".accesswidener"))
+
+  /*mixin {
     defaultRefmapName.set("mixins/wearablebackpacks/refmap.json")
   }
 
@@ -29,59 +40,61 @@ loom {
       property "mixin.checks", "true"
       property "mixin.hotSwap", "true"
     }
-  }
+  }*/
 }
 
 repositories {
-  maven {
-    url = "https://maven.terraformersmc.com"
-    content {
-      includeGroup "com.terraformersmc"
+    maven {
+      url = "https://maven.terraformersmc.com"
+      content {
+        includeGroup "com.terraformersmc"
+      }
     }
-  }
 }
 
 dependencies {
-  minecraft "com.mojang:minecraft:1.16.5"
-  mappings "net.fabricmc:yarn:1.16.5+build.10:v2"
-  modImplementation "net.fabricmc:fabric-loader:0.14.8"
+    //  minecraft "com.mojang:minecraft:1.16.5"
+    //  mappings "net.fabricmc:yarn:1.16.5+build.10:v2"
+    //  modImplementation "net.fabricmc:fabric-loader:0.14.8"
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-  final fabricVersion = "0.42.0+1.16"
+    final fabricVersion = "0.42.0+1.16"
 
-  modImplementation include(fabricApi.module("fabric-api-base", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-events-interaction-v0", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-key-binding-api-v1", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-lifecycle-events-v1", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-networking-api-v1", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-networking-blockentity-v0", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-object-builder-api-v1", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-registry-sync-v0", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-renderer-registries-v1", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-rendering-v1", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-resource-loader-v0", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-screen-handler-api-v1", fabricVersion))
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-  modImplementation "com.terraformersmc:modmenu:1.16.23"
+    modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
-  implementation "com.google.code.findbugs:jsr305:3.0.2"
-  implementation "org.jetbrains:annotations:23.0.0"
-  implementation 'org.checkerframework:checker-qual:3.22.1'
+    implementation "com.google.code.findbugs:jsr305:3.0.2"
+    implementation "org.jetbrains:annotations:23.0.0"
+    implementation 'org.checkerframework:checker-qual:3.22.1'
 }
 
-compileJava {
-  options.with {
-    it.deprecation = true
-    it.encoding = "UTF-8"
-    it.fork = true
-    it.compilerArgs.addAll(
-        ["-Xlint:all", "-Xlint:-processing",
-         // Enable parameter name class metadata 
-         // https://openjdk.java.net/jeps/118
-         "-parameters"]
-    )
-    it.release.set(8)
-  }
+java {
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this line, sources will not be generated.
+    withSourcesJar()
+
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
+
+/*compileJava {
+    options.with {
+        it.deprecation = true
+        it.encoding = "UTF-8"
+        it.fork = true
+        it.compilerArgs.addAll(
+                ["-Xlint:all", "-Xlint:-processing",
+                 // Enable parameter name class metadata
+                 // https://openjdk.java.net/jeps/118
+                 "-parameters"]
+        )
+        it.release.set(8)
+    }
+}*/
 
 processResources {
   filesMatching("/fabric.mod.json") {
@@ -90,27 +103,9 @@ processResources {
 }
 
 jar {
-  from "/LICENSE"
-
-  manifest.attributes(
-      "Build-Timestamp": Instant.now(),
-      "Build-Revision": versioning.info.commit,
-      "Build-Jvm": ""
-          + "${System.getProperty("java.version")} ("
-          + "${System.getProperty("java.vm.vendor")} "
-          + "${System.getProperty("java.vm.version")})",
-      "Built-By": GradleVersion.current(),
-
-      "Implementation-Title": project.name,
-      "Implementation-Version": project.version,
-      "Implementation-Vendor": project.group,
-
-      "Specification-Title": "FabricMod",
-      "Specification-Version": "1.0.0",
-      "Specification-Vendor": "dev.sapphic",
-
-      "Sealed": "true"
-  )
+    from("LICENSE") {
+      rename { "${it}_${project.base.archivesName.get()}"}
+    }
 }
 
 def antSignJar(task) {

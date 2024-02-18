@@ -14,7 +14,6 @@ import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.collection.DefaultedList;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -33,7 +32,7 @@ public final class WornBackpack implements BackpackContainer {
     this.contents = DefaultedList.ofSize(this.rows * this.columns, ItemStack.EMPTY);
     this.wearer = wearer;
     this.backpack = backpack;
-    final @Nullable NbtCompound nbt = backpack.getSubTag("BlockEntityTag");
+    final @Nullable NbtCompound nbt = backpack.getSubNbt("BlockEntityTag");
     if (nbt != null) {
       Inventories.readNbt(nbt, this.contents);
     }
@@ -57,7 +56,7 @@ public final class WornBackpack implements BackpackContainer {
     return new NamedScreenHandlerFactory() {
       @Override
       public Text getDisplayName() {
-        return backpack.hasCustomName() ? backpack.getName() : new TranslatableText("container." + Backpacks.ID);
+        return backpack.hasCustomName() ? backpack.getName() : Text.translatable("container." + Backpacks.ID);
       }
 
       @Override
@@ -124,9 +123,9 @@ public final class WornBackpack implements BackpackContainer {
   @Override
   public void markDirty() {
     if (!this.isEmpty()) {
-      Inventories.writeNbt(this.backpack.getOrCreateSubTag("BlockEntityTag"), this.contents);
+      Inventories.writeNbt(this.backpack.getOrCreateSubNbt("BlockEntityTag"), this.contents);
     } else {
-      this.backpack.removeSubTag("BlockEntityTag");
+      this.backpack.removeSubNbt("BlockEntityTag");
     }
   }
 
@@ -142,10 +141,10 @@ public final class WornBackpack implements BackpackContainer {
   public void onClose(final PlayerEntity player) {
     this.markDirty();
     final LivingEntity source = (this.wearer != null) ? this.wearer : player;
-    if (!source.world.isClient) {
-      source.world.playSound(null, source.getX(), source.getY(), source.getZ(),
+    if (!source.getWorld().isClient) {
+      source.getWorld().playSound(null, source.getX(), source.getY(), source.getZ(),
         SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, source.getSoundCategory(),
-        0.5F, (source.world.random.nextFloat() * 0.1F) + 0.9F
+        0.5F, (source.getWorld().random.nextFloat() * 0.1F) + 0.9F
       );
       BackpackWearer.getBackpackState(source).closed();
     }

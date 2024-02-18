@@ -1,11 +1,10 @@
 package dev.sapphic.wearablebackpacks.client;
 
-import net.minecraft.util.Tickable;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.function.Consumer;
 
-public final class BackpackLid implements Tickable {
+public final class BackpackLid {
   private static final float CLOSED_DELTA = 0.0F;
   private static final float OPENED_DELTA = 1.0F;
   private static final float DELTA_STEP = 0.2F;

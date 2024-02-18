@@ -3,8 +3,8 @@ package dev.sapphic.wearablebackpacks.loot;
 import dev.sapphic.wearablebackpacks.Backpacks;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.loot.function.LootFunctionType;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 public final class BackpackLootFunctions implements ModInitializer {
   public static final LootFunctionType COPY_COLOR = new LootFunctionType(CopyColorLootFunction.serializer());
