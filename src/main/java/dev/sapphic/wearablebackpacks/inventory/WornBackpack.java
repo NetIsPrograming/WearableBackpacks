@@ -63,7 +63,7 @@ public final class WornBackpack implements BackpackContainer {
       public ScreenHandler createMenu(
         final int containerId, final PlayerInventory inventory, final PlayerEntity player
       ) {
-        return new BackpackMenu(containerId, inventory, new WornBackpack(wearer, backpack));
+        return new BackpackScreenHandler(containerId, inventory, new WornBackpack(wearer, backpack));
       }
     };
   }

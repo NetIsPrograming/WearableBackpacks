@@ -5,7 +5,7 @@ import dev.sapphic.wearablebackpacks.BackpackOptions;
 import dev.sapphic.wearablebackpacks.Backpacks;
 import dev.sapphic.wearablebackpacks.client.BackpackLid;
 import dev.sapphic.wearablebackpacks.inventory.BackpackContainer;
-import dev.sapphic.wearablebackpacks.inventory.BackpackMenu;
+import dev.sapphic.wearablebackpacks.inventory.BackpackScreenHandler;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
@@ -59,7 +59,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
     public static void tick(World world, BlockPos pos, BlockState state, BackpackBlockEntity bbe) {
         //  TODO: ticking logic
 
-        lid.tick();
+        //lid.tick();
     }
 
     @Override
@@ -235,7 +235,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
 
     @Override
     protected ScreenHandler createScreenHandler(final int id, final PlayerInventory inventory) {
-        return new BackpackMenu(id, inventory, this);
+        return new BackpackScreenHandler(id, inventory, this);
     }
 
     @Nullable
@@ -319,7 +319,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
         this.event(EMPTY_FLAG_TYPE, this.empty ? 1 : 0);
     }
 
-    private void event(final int type, final int data, World world) {
+    private void event(final int type, final int data) {
         if (this.world instanceof ServerWorld) {
             this.world.addSyncedBlockEvent(this.pos, this.getCachedState().getBlock(), type, data);
         }

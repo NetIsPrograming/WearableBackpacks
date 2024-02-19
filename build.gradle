@@ -1,54 +1,51 @@
 plugins {
-  id "fabric-loom" version "1.5-SNAPSHOT"
-  id "net.nemerosa.versioning" version "3.0.0"
-  id "org.gradle.signing"
+    id "fabric-loom" version "1.5-SNAPSHOT"
+    id "net.nemerosa.versioning" version "3.0.0"
+    id "org.gradle.signing"
+    id 'maven-publish'
 }
 
 version = project.mod_version
 group = project.maven_group
 
 base {
-    archivesName = project.archivesBaseName
-}
-
-java {
-  withSourcesJar()
+    archivesName = project.archives_base_name
 }
 
 loom {
-  splitEnvironmentSourceSets()
+    accessWidenerPath = file("src/main/resources/wearablebackpacks.accesswidener")
 
-  mods {
-    group {
-      sourceSet sourceSets.main
-      sourceSet sourceSets.client
+    /*mixin {
+      defaultRefmapName.set("mixins/wearablebackpacks/refmap.json")
     }
-  }
 
-  //accessWidenerPath.set(file(".accesswidener"))
+    runs {
+      configureEach {
+        property "mixin.debug", "true"
+        property "mixin.debug.export.decompile", "false"
+        property "mixin.debug.verbose", "true"
+        property "mixin.dumpTargetOnFailure", "true"
+        property "mixin.checks", "true"
+        property "mixin.hotSwap", "true"
+      }
+    }*/
 
-  /*mixin {
-    defaultRefmapName.set("mixins/wearablebackpacks/refmap.json")
-  }
+    splitEnvironmentSourceSets()
 
-  runs {
-    configureEach {
-      property "mixin.debug", "true"
-      property "mixin.debug.export.decompile", "false"
-      property "mixin.debug.verbose", "true"
-      property "mixin.dumpTargetOnFailure", "true"
-      property "mixin.checks", "true"
-      property "mixin.hotSwap", "true"
+    mods {
+        "wearablebackpacks" {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
     }
-  }*/
 }
 
 repositories {
     maven {
-      url = "https://maven.terraformersmc.com"
-      content {
-        includeGroup "com.terraformersmc"
-      }
+        url = "https://maven.terraformersmc.com"
+        content {
+            includeGroup "com.terraformersmc"
+        }
     }
 }
 
@@ -60,8 +57,6 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    final fabricVersion = "0.42.0+1.16"
-
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
@@ -69,6 +64,10 @@ dependencies {
     implementation "com.google.code.findbugs:jsr305:3.0.2"
     implementation "org.jetbrains:annotations:23.0.0"
     implementation 'org.checkerframework:checker-qual:3.22.1'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 17
 }
 
 java {
@@ -97,52 +96,52 @@ java {
 }*/
 
 processResources {
-  filesMatching("/fabric.mod.json") {
-    expand version: version
-  }
+    filesMatching("/fabric.mod.json") {
+        expand version: version
+    }
 }
 
 jar {
     from("LICENSE") {
-      rename { "${it}_${project.base.archivesName.get()}"}
+        rename { "${it}_${project.base.archivesName.get()}" }
     }
 }
 
 def antSignJar(task) {
-  for (final file in task.outputs.files) {
-    ant.signjar(
-        jar: file,
-        alias: property("signing.mods.keyalias"),
-        storepass: property("signing.mods.password"),
-        keystore: property("signing.mods.keystore"),
-        verbose: true,
-        preservelastmodified: true
-    )
-  }
+    for (final file in task.outputs.files) {
+        ant.signjar(
+                jar: file,
+                alias: property("signing.mods.keyalias"),
+                storepass: property("signing.mods.password"),
+                keystore: property("signing.mods.keystore"),
+                verbose: true,
+                preservelastmodified: true
+        )
+    }
 }
 
 if (hasProperty "signing.mods.keyalias") {
-  task signJar(type: Sign) {
-    dependsOn remapJar
+    task signJar(type: Sign) {
+        dependsOn remapJar
 
-    doFirst {
-      antSignJar remapJar
+        doFirst {
+            antSignJar remapJar
+        }
+
+        sign remapJar
     }
 
-    sign remapJar
-  }
+    task signSourcesJar(type: Sign) {
+        dependsOn remapSourcesJar
 
-  task signSourcesJar(type: Sign) {
-    dependsOn remapSourcesJar
+        doFirst {
+            antSignJar remapSourcesJar
+        }
 
-    doFirst {
-      antSignJar remapSourcesJar
+        sign remapSourcesJar
     }
 
-    sign remapSourcesJar
-  }
-
-  assemble {
-    dependsOn(signJar, signSourcesJar)
-  }
+    assemble {
+        dependsOn(signJar, signSourcesJar)
+    }
 }

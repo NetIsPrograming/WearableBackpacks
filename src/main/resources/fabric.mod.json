@@ -13,7 +13,7 @@
   "entrypoints": {
     "client": [
       "dev.sapphic.wearablebackpacks.client.BackpacksClient",
-      "dev.sapphic.wearablebackpacks.network.BackpackClientNetwork"
+      "dev.sapphic.wearablebackpacks.client.BackpackClientNetwork"
     ],
     "main": [
       "dev.sapphic.wearablebackpacks.Backpacks",

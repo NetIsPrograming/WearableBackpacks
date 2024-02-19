@@ -8,16 +8,16 @@ import net.minecraft.stat.Stats;
 import net.minecraft.util.Identifier;
 
 public final class BackpackStats implements ModInitializer {
-  public static final Identifier OPENED = new Identifier(Backpacks.ID, "backpacks_opened");
-  public static final Identifier CLEANED = new Identifier(Backpacks.ID, "backpacks_cleaned");
+    public static final Identifier OPENED = new Identifier(Backpacks.ID, "backpacks_opened");
+    public static final Identifier CLEANED = new Identifier(Backpacks.ID, "backpacks_cleaned");
 
-  private static void register(final Identifier stat) {
-    Stats.CUSTOM.getOrCreateStat(Registry.register(Registries.CUSTOM_STAT, stat, stat));
-  }
+    private static void register(final Identifier stat) {
+        Stats.CUSTOM.getOrCreateStat(Registry.register(Registries.CUSTOM_STAT, stat, stat));
+    }
 
-  @Override
-  public void onInitialize() {
-    register(OPENED);
-    register(CLEANED);
-  }
+    @Override
+    public void onInitialize() {
+        register(OPENED);
+        register(CLEANED);
+    }
 }
