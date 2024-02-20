@@ -16,6 +16,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
@@ -29,7 +30,7 @@ public final class BackpackMod implements ModInitializer {
     public static final BlockEntityType<BackpackBlockEntity> BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(BackpackBlockEntity::new, BLOCK).build();
     public static final Item ITEM = new BackpackItem(BLOCK, new Item.Settings());
 
-    public static final ScreenHandlerType<BackpackScreenHandler> BACKPACK_SCREEN_HANDLER = new ExtendedScreenHandlerType<>(BackpackScreenHandler::new);
+    public static final ScreenHandlerType<BackpackScreenHandler> BACKPACK_SCREEN_HANDLER = new ScreenHandlerType<>(BackpackScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 
     public static final Identifier OPEN_OWN_BACKPACK = new Identifier(ID, "open_own_backpack");
 

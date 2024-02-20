@@ -11,7 +11,6 @@ import net.minecraft.client.WindowEventHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.util.snooper.SnooperListener;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,8 +22,8 @@ import org.spongepowered.asm.mixin.injection.Slice;
 
 @Mixin(MinecraftClient.class)
 @Environment(EnvType.CLIENT)
-abstract class MinecraftClientMixin implements SnooperListener, WindowEventHandler {
-  @ModifyVariable(
+abstract class MinecraftClientMixin implements WindowEventHandler {
+  /*@ModifyVariable(
     method = "addBlockEntityNbt",
     at = @At(
       value = "INVOKE_ASSIGN",
@@ -64,5 +63,5 @@ abstract class MinecraftClientMixin implements SnooperListener, WindowEventHandl
       // We overwrite sub tags; to account for this too would be out of scope for our need
       existing.put(subKey, ((NbtCompound) nbt).get(subKey));
     }
-  }
+  }*/
 }

@@ -6,10 +6,11 @@
   "description": "Adds beautiful, balanced backpacks",
   "license": "MIT",
   "depends": {
-    "fabricloader": ">=0.11.6",
-    "minecraft": "1.16.5",
-    "java": ">=8"
+    "fabricloader": ">=0.15.7",
+    "minecraft": "1.20.1",
+    "java": ">=17"
   },
+  "environment": "*",
   "entrypoints": {
     "client": [
       "dev.sapphic.wearablebackpacks.client.BackpacksClient",
@@ -25,13 +26,17 @@
     ]
   },
   "mixins": [
-    "mixins/wearablebackpacks/mixins.client.json",
-    "mixins/wearablebackpacks/mixins.server.json"
+    "mixins.server.json",
+    {
+      "config": "mixins.client.json",
+      "environment": "client"
+    }
   ],
   "authors": [
     "Chloe Dawn",
     "copygirl",
-    "asie"
+    "asie",
+    "NetUserGet"
   ],
   "contact": {
     "homepage": "https://bit.ly/33owdaZ",

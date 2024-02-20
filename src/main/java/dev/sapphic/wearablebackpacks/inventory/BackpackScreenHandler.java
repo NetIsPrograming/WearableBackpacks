@@ -29,9 +29,15 @@ public final class BackpackScreenHandler extends ScreenHandler {
 
     private final BackpackContainer backpack;
 
+    //private final ScreenHandlerType<?> type;
+
     // Here
-    public BackpackScreenHandler(int syncId, PlayerInventory inventory, PacketByteBuf buf) {
-        this(BACKPACK_SCREEN_HANDLER ,syncId, inventory, (BackpackContainer) backpack);
+    public BackpackScreenHandler(int syncId, PlayerInventory inventory) {
+        this(syncId, inventory, new WornBackpack());
+    }
+
+    public BackpackScreenHandler(int syncId, PlayerInventory inventory, BackpackContainer backpack) {
+        this(BACKPACK_SCREEN_HANDLER ,syncId, inventory, backpack);
     }
 
     private BackpackScreenHandler(ScreenHandlerType<?> type, int syncId, PlayerInventory inventory, BackpackContainer backpack) {

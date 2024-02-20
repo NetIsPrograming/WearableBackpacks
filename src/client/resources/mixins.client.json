@@ -1,12 +1,12 @@
 {
   "minVersion": "0.8",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_17",
   "required": true,
   "package": "dev.sapphic.wearablebackpacks.client.mixin",
   "client": [
     "ArmorFeatureRendererMixin",
-    "BlockModelRendererMixin",
-    "DrawableHelperAccessor",
+
+
     "DualVertexConsumerAccessor",
     "ItemRendererMixin",
     "MinecraftClientAccessor",
