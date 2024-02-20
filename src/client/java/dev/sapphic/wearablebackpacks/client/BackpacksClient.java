@@ -2,15 +2,14 @@ package dev.sapphic.wearablebackpacks.client;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import dev.sapphic.wearablebackpacks.Backpack;
-import dev.sapphic.wearablebackpacks.Backpacks;
+import dev.sapphic.wearablebackpacks.inventory.Backpack;
+import dev.sapphic.wearablebackpacks.inventory.BackpackWearer;
+import dev.sapphic.wearablebackpacks.BackpackMod;
 import dev.sapphic.wearablebackpacks.block.BackpackBlock;
 import dev.sapphic.wearablebackpacks.client.mixin.DualVertexConsumerAccessor;
 import dev.sapphic.wearablebackpacks.client.mixin.MinecraftClientAccessor;
 import dev.sapphic.wearablebackpacks.client.mixin.ModelLoaderAccessor;
-import dev.sapphic.wearablebackpacks.client.render.BackpackBlockRenderer;
 import dev.sapphic.wearablebackpacks.client.screen.BackpackScreen;
-import dev.sapphic.wearablebackpacks.inventory.BackpackScreenHandler;
 import dev.sapphic.wearablebackpacks.item.BackpackItem;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
@@ -19,12 +18,12 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
@@ -66,23 +65,26 @@ import java.util.function.Function;
 
 @Environment(EnvType.CLIENT)
 public final class BackpacksClient implements ClientModInitializer {
-    public static final Identifier BACKPACK_STATE_CHANGED = new Identifier(Backpacks.ID, "backpack_state_changed");
+    public static final Identifier BACKPACK_STATE_CHANGED = new Identifier(BackpackMod.ID, "backpack_state_changed");
 
-    private static final Identifier BACKPACK_LID = new Identifier(Backpacks.ID, "backpack_lid");
-    private static final KeyBinding BACKPACK_KEY_BINDING = new KeyBinding("key." + Backpacks.ID + ".backpack", GLFW.GLFW_KEY_B, "key.categories.inventory");
-
-
+    private static final Identifier BACKPACK_LID = new Identifier(BackpackMod.ID, "backpack_lid");
+    private static final KeyBinding BACKPACK_KEY_BINDING = new KeyBinding("key." + BackpackMod.ID + ".backpack", GLFW.GLFW_KEY_B, "key.categories.inventory");
 
     @Override
     public void onInitializeClient() {
         addLidStateDefinitions();
-        Registry.register(Registries.SCREEN_HANDLER, BackpackScreenHandler.TYPE, BackpackScreen::new);
+
+        HandledScreens.register(BackpackMod.BACKPACK_SCREEN_HANDLER, BackpackScreen::new);
 
         KeyBindingHelper.registerKeyBinding(BACKPACK_KEY_BINDING);
+
         ClientTickEvents.END_CLIENT_TICK.register(BackpacksClient::pollBackpackKey);
-        BlockEntityRendererRegistry.INSTANCE.register(Backpacks.BLOCK_ENTITY, BackpackBlockRenderer::new);
-        ColorProviderRegistry.BLOCK.register((state, world, pos, tint) -> Backpack.getColor(world, pos), Backpacks.BLOCK);
-        ColorProviderRegistry.ITEM.register((stack, tint) -> Backpack.getColor(stack), Backpacks.ITEM);
+
+        Registry.register(Registries.BLOCK_ENTITY_TYPE, BackpackMod.ID, BackpackMod.BLOCK_ENTITY);
+
+        ColorProviderRegistry.BLOCK.register((state, world, pos, tint) -> Backpack.getColor(world, pos), BackpackMod.BLOCK);
+        ColorProviderRegistry.ITEM.register((stack, tint) -> Backpack.getColor(stack), BackpackMod.ITEM);
+
         ClientPlayNetworking.registerGlobalReceiver(BACKPACK_STATE_CHANGED, (client, handler, buf, sender) -> {
             final int entityId = buf.readInt();
             final boolean opened = buf.readBoolean();
@@ -121,7 +123,7 @@ public final class BackpacksClient implements ClientModInitializer {
         final BlockModelRenderer renderer = manager.getModelRenderer();
         final RenderLayer layer = RenderLayer.getArmorCutoutNoCull(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
         final VertexConsumer pipeline = ItemRenderer.getArmorGlintConsumer(pipelines, layer, false, backpack.hasGlint());
-        final BakedModel backpackModel = models.getModel(Backpacks.BLOCK.getDefaultState());
+        final BakedModel backpackModel = models.getModel(BackpackMod.BLOCK.getDefaultState());
         final BakedModel lidModel = models.getModelManager().getModel(getLidModel(Direction.NORTH));
 
         final int color = Backpack.getColor(backpack);

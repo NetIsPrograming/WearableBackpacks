@@ -3,8 +3,8 @@ package dev.sapphic.wearablebackpacks.loot;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import dev.sapphic.wearablebackpacks.Backpack;
-import dev.sapphic.wearablebackpacks.Backpacks;
+import dev.sapphic.wearablebackpacks.inventory.Backpack;
+import dev.sapphic.wearablebackpacks.BackpackMod;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
 import dev.sapphic.wearablebackpacks.item.BackpackItem;
 import net.minecraft.block.entity.BlockEntity;
@@ -23,7 +23,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.util.Set;
 
 public final class CopyColorLootFunction extends ConditionalLootFunction {
-    public static final Identifier ID = new Identifier(Backpacks.ID, "copy_color");
+    public static final Identifier ID = new Identifier(BackpackMod.ID, "copy_color");
 
     CopyColorLootFunction(final LootCondition[] conditions) {
         super(conditions);

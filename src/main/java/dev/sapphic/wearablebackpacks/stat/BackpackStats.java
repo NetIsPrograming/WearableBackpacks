@@ -1,6 +1,6 @@
 package dev.sapphic.wearablebackpacks.stat;
 
-import dev.sapphic.wearablebackpacks.Backpacks;
+import dev.sapphic.wearablebackpacks.BackpackMod;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -8,8 +8,8 @@ import net.minecraft.stat.Stats;
 import net.minecraft.util.Identifier;
 
 public final class BackpackStats implements ModInitializer {
-    public static final Identifier OPENED = new Identifier(Backpacks.ID, "backpacks_opened");
-    public static final Identifier CLEANED = new Identifier(Backpacks.ID, "backpacks_cleaned");
+    public static final Identifier OPENED = new Identifier(BackpackMod.ID, "backpacks_opened");
+    public static final Identifier CLEANED = new Identifier(BackpackMod.ID, "backpacks_cleaned");
 
     private static void register(final Identifier stat) {
         Stats.CUSTOM.getOrCreateStat(Registry.register(Registries.CUSTOM_STAT, stat, stat));

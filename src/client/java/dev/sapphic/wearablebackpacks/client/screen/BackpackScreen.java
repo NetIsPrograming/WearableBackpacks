@@ -1,7 +1,7 @@
 package dev.sapphic.wearablebackpacks.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import dev.sapphic.wearablebackpacks.Backpacks;
+import dev.sapphic.wearablebackpacks.BackpackMod;
 import dev.sapphic.wearablebackpacks.client.mixin.DrawableHelperAccessor;
 import dev.sapphic.wearablebackpacks.inventory.BackpackScreenHandler;
 import net.fabricmc.api.EnvType;
@@ -17,7 +17,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public final class BackpackScreen extends HandledScreen<BackpackScreenHandler> {
-    private static final Identifier TEXTURE = new Identifier(Backpacks.ID, "textures/gui/container/backpack.png");
+    private static final Identifier TEXTURE = new Identifier(BackpackMod.ID, "textures/gui/container/backpack.png");
 
     public BackpackScreen(final BackpackScreenHandler menu, final PlayerInventory inventory, final Text name) {
         super(menu, inventory, name);

@@ -16,7 +16,7 @@
       "dev.sapphic.wearablebackpacks.client.BackpackClientNetwork"
     ],
     "main": [
-      "dev.sapphic.wearablebackpacks.Backpacks",
+      "dev.sapphic.wearablebackpacks.BackpackMod",
       "dev.sapphic.wearablebackpacks.advancement.BackpackCriteria",
       "dev.sapphic.wearablebackpacks.event.BackpackEntityEvents",
       "dev.sapphic.wearablebackpacks.loot.BackpackLootFunctions",

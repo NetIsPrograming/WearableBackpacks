@@ -1,6 +1,6 @@
 package dev.sapphic.wearablebackpacks.item;
 
-import dev.sapphic.wearablebackpacks.Backpack;
+import dev.sapphic.wearablebackpacks.inventory.Backpack;
 import dev.sapphic.wearablebackpacks.advancement.BackpackCriteria;
 import dev.sapphic.wearablebackpacks.block.BackpackBlock;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
@@ -39,7 +39,7 @@ public final class BackpackItem extends DyeableArmorItem {
     private final Block block;
 
     public BackpackItem(final Block block, final Settings settings) {
-        super(BackpackMaterial.INSTANCE, EquipmentSlot.CHEST, settings);
+        super(BackpackMaterial.INSTANCE, Type.CHESTPLATE, settings);
         Validate.isInstanceOf(BackpackBlock.class, block);
         this.block = block;
     }
@@ -47,7 +47,7 @@ public final class BackpackItem extends DyeableArmorItem {
     private static BlockState getBlockStateFromTag(
             final BlockPos pos, final ModifiableWorld world, final ItemStack stack, final BlockState state
     ) {
-        final @Nullable NbtCompound blockStateTag = stack.getSubTag("BlockStateTag");
+        final @Nullable NbtCompound blockStateTag = stack.getSubNbt("BlockStateTag");
         if (blockStateTag != null) {
             BlockState parsedState = state;
             final StateManager<Block, BlockState> container = state.getBlock().getStateManager();
@@ -104,17 +104,17 @@ public final class BackpackItem extends DyeableArmorItem {
                 BackpackCriteria.DYED.trigger((ServerPlayerEntity) entity);
             }
         }
-        if ((slot != EquipmentSlot.CHEST.getEntitySlotId()) && !((PlayerEntity) entity).abilities.creativeMode) {
+        if ((slot != EquipmentSlot.CHEST.getEntitySlotId()) && !((PlayerEntity) entity).getAbilities().creativeMode) {
             final DefaultedList<ItemStack> stacks = Backpack.getContents(backpack);
             boolean hasContents = false;
             for (final ItemStack stack : stacks) {
                 if (!stack.isEmpty()) {
                     hasContents = true;
-                    ((PlayerEntity) entity).inventory.offerOrDrop(world, stack);
+                    ((PlayerEntity) entity).getInventory().offerOrDrop(stack);
                 }
             }
             if (hasContents) {
-                backpack.removeSubTag("BlockEntityTag");
+                backpack.removeSubNbt("BlockEntityTag");
             }
         }
     }
@@ -129,12 +129,12 @@ public final class BackpackItem extends DyeableArmorItem {
         this.block.appendTooltip(stack, world, tooltip, context);
     }
 
-    @Override
+    /*@Override
     public void appendStacks(final ItemGroup group, final DefaultedList<ItemStack> stacks) {
         if (this.isIn(group)) {
             this.block.addStacksForDisplay(group, stacks);
         }
-    }
+    }*/
 
     private @Nullable BlockState getPlacementState(final ItemPlacementContext context) {
         final @Nullable BlockState state = this.block.getPlacementState(context);

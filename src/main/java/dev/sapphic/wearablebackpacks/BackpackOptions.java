@@ -61,23 +61,23 @@ public final class BackpackOptions {
         this.toughness = DEFAULT_TOUGHNESS;
     }
 
-    static int getRows() {
+    public static int getRows() {
         return instance.rows;
     }
 
-    static int getColumns() {
+    public static int getColumns() {
         return instance.columns;
     }
 
-    static int getMaxDamage() {
+    public static int getMaxDamage() {
         return instance.maxDamage;
     }
 
-    static int getDefense() {
+    public static int getDefense() {
         return instance.defense;
     }
 
-    static float getToughness() {
+    public static float getToughness() {
         return instance.toughness;
     }
 

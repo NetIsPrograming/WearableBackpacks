@@ -1,6 +1,6 @@
 package dev.sapphic.wearablebackpacks.client.mixin;
 
-import dev.sapphic.wearablebackpacks.Backpacks;
+import dev.sapphic.wearablebackpacks.BackpackMod;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedQuad;
@@ -24,7 +24,7 @@ abstract class ItemRendererMixin {
     final VertexConsumer pipeline, final MatrixStack.Entry entry, final BakedQuad quad, final float red, final float green, final float blue, final int light, final int overlay,
     final MatrixStack matrices, final VertexConsumer vertices, final List<BakedQuad> quads, final ItemStack stack, final int light1, final int overlay1
   ) {
-    if ((pipeline instanceof DualVertexConsumerAccessor) && (stack.getItem() == Backpacks.ITEM) && !quad.hasColor()) {
+    if ((pipeline instanceof DualVertexConsumerAccessor) && (stack.getItem() == BackpackMod.ITEM) && !quad.hasColor()) {
       ((DualVertexConsumerAccessor) pipeline).getSecond().quad(entry, quad, red, green, blue, light, overlay);
     } else {
       pipeline.quad(entry, quad, red, green, blue, light, overlay);

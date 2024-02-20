@@ -1,9 +1,9 @@
 package dev.sapphic.wearablebackpacks.block.entity;
 
-import dev.sapphic.wearablebackpacks.Backpack;
+import dev.sapphic.wearablebackpacks.inventory.Backpack;
+import dev.sapphic.wearablebackpacks.BackpackLid;
 import dev.sapphic.wearablebackpacks.BackpackOptions;
-import dev.sapphic.wearablebackpacks.Backpacks;
-import dev.sapphic.wearablebackpacks.client.BackpackLid;
+import dev.sapphic.wearablebackpacks.BackpackMod;
 import dev.sapphic.wearablebackpacks.inventory.BackpackContainer;
 import dev.sapphic.wearablebackpacks.inventory.BackpackScreenHandler;
 import net.fabricmc.fabric.api.util.NbtType;
@@ -20,6 +20,7 @@ import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerFactory;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -30,7 +31,7 @@ import net.minecraft.world.World;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-public final class BackpackBlockEntity extends LootableContainerBlockEntity implements Backpack, BackpackContainer {
+public final class BackpackBlockEntity extends LootableContainerBlockEntity implements Backpack, BackpackContainer, ScreenHandlerFactory {
 
     private static final int OPENS_DATA_TYPE = 0x0;
     private static final int COLOR_DATA_TYPE = 0x1;
@@ -53,7 +54,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
     private boolean enchanted;
 
     public BackpackBlockEntity(BlockPos pos, BlockState state) {
-        super(Backpacks.BLOCK_ENTITY, pos, state);
+        super(BackpackMod.BLOCK_ENTITY, pos, state);
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, BackpackBlockEntity bbe) {
@@ -230,7 +231,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
 
     @Override
     protected Text getContainerName() {
-        return Text.translatable("container." + Backpacks.ID);
+        return Text.translatable("container." + BackpackMod.ID);
     }
 
     @Override

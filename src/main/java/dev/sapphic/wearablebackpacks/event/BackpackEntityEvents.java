@@ -1,6 +1,6 @@
 package dev.sapphic.wearablebackpacks.event;
 
-import dev.sapphic.wearablebackpacks.client.BackpackWearer;
+import dev.sapphic.wearablebackpacks.inventory.BackpackWearer;
 import dev.sapphic.wearablebackpacks.inventory.WornBackpack;
 import dev.sapphic.wearablebackpacks.item.BackpackItem;
 import net.fabricmc.api.ModInitializer;

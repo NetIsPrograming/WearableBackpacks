@@ -1,6 +1,6 @@
 package dev.sapphic.wearablebackpacks.client.mixin;
 
-import dev.sapphic.wearablebackpacks.Backpacks;
+import dev.sapphic.wearablebackpacks.BackpackMod;
 import dev.sapphic.wearablebackpacks.client.BackpacksClient;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -39,7 +39,7 @@ abstract class BlockModelRendererMixin {
     if (pipeline instanceof DualVertexConsumerAccessor) {
       final BlockModels models = MinecraftClient.getInstance().getBlockRenderManager().getModels();
       final boolean isLid = model == models.getModelManager().getModel(BackpacksClient.getLidModel(Direction.NORTH));
-      if (isLid || (model == models.getModel(Backpacks.BLOCK.getDefaultState()))) {
+      if (isLid || (model == models.getModel(BackpackMod.BLOCK.getDefaultState()))) {
         BackpacksClient.renderBackpackQuad(entry, pipeline, red, green, blue, quads, light, overlay);
         return;
       }

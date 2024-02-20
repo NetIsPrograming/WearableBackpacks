@@ -1,6 +1,6 @@
 package dev.sapphic.wearablebackpacks.client.mixin;
 
-import dev.sapphic.wearablebackpacks.Backpacks;
+import dev.sapphic.wearablebackpacks.BackpackMod;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -54,7 +54,7 @@ abstract class MinecraftClientMixin implements SnooperListener, WindowEventHandl
     allow = 1, require = 0) // If someone else is redirecting this they likely have similar intentions
   private void patchDisplayNbt(final ItemStack stack, final String key, final NbtElement nbt) {
     final @Nullable NbtCompound existing = stack.getSubTag(key);
-    if ((existing == null) || (stack.getItem() != Backpacks.ITEM)) {
+    if ((existing == null) || (stack.getItem() != BackpackMod.ITEM)) {
       // Vanilla logic
       stack.putSubTag(key, nbt);
       return;

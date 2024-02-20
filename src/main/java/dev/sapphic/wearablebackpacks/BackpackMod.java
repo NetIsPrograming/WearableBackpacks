@@ -20,7 +20,7 @@ import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 
-public final class Backpacks implements ModInitializer {
+public final class BackpackMod implements ModInitializer {
     public static final String ID = "wearablebackpacks";
 
     private static final Identifier backpack = new Identifier(ID, "backpack");
@@ -29,7 +29,11 @@ public final class Backpacks implements ModInitializer {
     public static final BlockEntityType<BackpackBlockEntity> BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(BackpackBlockEntity::new, BLOCK).build();
     public static final Item ITEM = new BackpackItem(BLOCK, new Item.Settings());
 
-    public static final ScreenHandlerType<BackpackScreenHandler> BACKPACK_SCREEN_TYPE = new ExtendedScreenHandlerType<>(BackpackScreenHandler::new);
+    public static final ScreenHandlerType<BackpackScreenHandler> BACKPACK_SCREEN_HANDLER = new ExtendedScreenHandlerType<>(BackpackScreenHandler::new);
+
+    public static final Identifier OPEN_OWN_BACKPACK = new Identifier(ID, "open_own_backpack");
+
+    public static final Identifier BACKPACK_UPDATED = new Identifier(ID, "backpack_updated");
 
     @Override
     public void onInitialize() {
@@ -41,7 +45,8 @@ public final class Backpacks implements ModInitializer {
         //  Too hacky
         //  Item.BLOCK_ITEMS.put(BLOCK, ITEM);
 
-        Registry.register(Registries.SCREEN_HANDLER, backpack, BackpackScreenHandler.);
+        Registry.register(Registries.SCREEN_HANDLER, backpack, BACKPACK_SCREEN_HANDLER);
+
         Registry.register(Registries.RECIPE_SERIALIZER, BackpackDyeingRecipe.ID, BackpackDyeingRecipe.SERIALIZER);
     }
 }

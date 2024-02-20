@@ -1,6 +1,6 @@
 package dev.sapphic.wearablebackpacks.mixin;
 
-import dev.sapphic.wearablebackpacks.Backpack;
+import dev.sapphic.wearablebackpacks.inventory.Backpack;
 import dev.sapphic.wearablebackpacks.item.BackpackItem;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;

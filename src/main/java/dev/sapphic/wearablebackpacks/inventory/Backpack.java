@@ -1,5 +1,6 @@
-package dev.sapphic.wearablebackpacks;
+package dev.sapphic.wearablebackpacks.inventory;
 
+import dev.sapphic.wearablebackpacks.BackpackOptions;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.block.entity.BlockEntity;

@@ -1,11 +1,15 @@
 package dev.sapphic.wearablebackpacks.inventory;
 
-import dev.sapphic.wearablebackpacks.client.BackpacksClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
+
+import static dev.sapphic.wearablebackpacks.BackpackMod.BACKPACK_SCREEN_HANDLER;
 
 public final class BackpackScreenHandler extends ScreenHandler {
 
@@ -18,19 +22,20 @@ public final class BackpackScreenHandler extends ScreenHandler {
     public static final int HOTBAR_SLOTS = HOTBAR_COLS * HOTBAR_ROWS;
     public static final int INVENTORY_SLOTS = INVENTORY_COLS * INVENTORY_ROWS;
 
-    public static final int TITLE_PADDING = 18;
+    //public static final int TITLE_PADDING = 18;
     public static final int SLOT_DIMENSIONS = 18;
 
     public static final int THIN_EDGE = 8;
 
     private final BackpackContainer backpack;
 
-    public BackpackScreenHandler(final int syncId, final PlayerInventory inventory) {
-        this(syncId, inventory, new WornBackpack());
+    // Here
+    public BackpackScreenHandler(int syncId, PlayerInventory inventory, PacketByteBuf buf) {
+        this(BACKPACK_SCREEN_HANDLER ,syncId, inventory, (BackpackContainer) backpack);
     }
 
-    public BackpackScreenHandler(final int syncId, final PlayerInventory inventory, final BackpackContainer backpack) {
-        super(BackpacksClient.BACKPACK_SCREEN_TYPE, syncId);
+    private BackpackScreenHandler(ScreenHandlerType<?> type, int syncId, PlayerInventory inventory, BackpackContainer backpack) {
+        super(type, syncId);
         final int rows = backpack.getRows();
         final int columns = backpack.getColumns();
 
@@ -116,9 +121,9 @@ public final class BackpackScreenHandler extends ScreenHandler {
         return original;
     }
 
-    @Override
+    //@Override
     public void close(final PlayerEntity player) {
-        super.close(player);
+        //super.close(player);
         this.backpack.onClose(player);
     }
 

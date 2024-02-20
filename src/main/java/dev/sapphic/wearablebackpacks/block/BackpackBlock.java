@@ -2,8 +2,8 @@ package dev.sapphic.wearablebackpacks.block;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import dev.sapphic.wearablebackpacks.Backpack;
-import dev.sapphic.wearablebackpacks.Backpacks;
+import dev.sapphic.wearablebackpacks.inventory.Backpack;
+import dev.sapphic.wearablebackpacks.BackpackMod;
 import dev.sapphic.wearablebackpacks.advancement.BackpackCriteria;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
 import dev.sapphic.wearablebackpacks.item.BackpackItem;
@@ -282,7 +282,7 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
                     }
                 }
                 if (hasItems) {
-                    tooltip.add(Text.translatable("container." + Backpacks.ID + ".items").formatted(Formatting.GOLD));
+                    tooltip.add(Text.translatable("container." + BackpackMod.ID + ".items").formatted(Formatting.GOLD));
                 }
             }
         }
@@ -301,7 +301,7 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, Backpacks.BLOCK_ENTITY, (world1, pos, state1, be) -> BackpackBlockEntity.tick(world1, pos, state1, be));
+        return checkType(type, BackpackMod.BLOCK_ENTITY, BackpackBlockEntity::tick);
     }
 
     private int getBlendedColor(final Backpack backpack, final DyeItem dye) {
