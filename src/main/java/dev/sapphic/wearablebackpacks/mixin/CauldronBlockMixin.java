@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(CauldronBlock.class)
 abstract class CauldronBlockMixin {
-    @Inject(
+    /*@Inject(
             method = "onUse",
             at = @At(
                     value = "FIELD",
@@ -26,7 +26,7 @@ abstract class CauldronBlockMixin {
                     shift = Shift.BEFORE
             ),
             cancellable = true,
-            allow = 1)
+            allow = 1)*/
     private void tryCleanBackpack(
             final BlockState state, final World world, final BlockPos pos, final PlayerEntity player, final Hand hand,
             final BlockHitResult hit, final CallbackInfoReturnable<? super ActionResult> cir

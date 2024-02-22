@@ -2,6 +2,8 @@ package dev.sapphic.wearablebackpacks.client;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
+import dev.sapphic.wearablebackpacks.client.render.BackpackBlockRenderer;
 import dev.sapphic.wearablebackpacks.inventory.Backpack;
 import dev.sapphic.wearablebackpacks.inventory.BackpackWearer;
 import dev.sapphic.wearablebackpacks.BackpackMod;
@@ -18,6 +20,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -32,6 +35,7 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.BlockModelRenderer;
 import net.minecraft.client.render.block.BlockModels;
 import net.minecraft.client.render.block.BlockRenderManager;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedModel;
@@ -76,11 +80,13 @@ public final class BackpacksClient implements ClientModInitializer {
 
         HandledScreens.register(BackpackMod.BACKPACK_SCREEN_HANDLER, BackpackScreen::new);
 
+        BlockEntityRendererFactories.register(BackpackMod.BLOCK_ENTITY, BackpackBlockRenderer::new);
+
         KeyBindingHelper.registerKeyBinding(BACKPACK_KEY_BINDING);
 
         ClientTickEvents.END_CLIENT_TICK.register(BackpacksClient::pollBackpackKey);
 
-        Registry.register(Registries.BLOCK_ENTITY_TYPE, BackpackMod.ID, BackpackMod.BLOCK_ENTITY);
+        //Registry.register(Registries.BLOCK_ENTITY_TYPE, BackpackMod.ID, BackpackMod.BLOCK_ENTITY);
 
         ColorProviderRegistry.BLOCK.register((state, world, pos, tint) -> Backpack.getColor(world, pos), BackpackMod.BLOCK);
         ColorProviderRegistry.ITEM.register((stack, tint) -> Backpack.getColor(stack), BackpackMod.ITEM);
@@ -145,8 +151,9 @@ public final class BackpacksClient implements ClientModInitializer {
         final double yPivot = 0.5625;
         final double zPivot = 1.0 - 0.3125;
         //noinspection CastToIncompatibleInterface
-        final float lidDelta = ((BackpackWearer) entity).getBackpackState().lidDelta(tickDelta());
-        final Quaternionf rotation = RotationAxis.POSITIVE_X.rotation(45.0F * lidDelta);
+        //final float lidDelta = ((BackpackWearer) entity).getBackpackState().lidDelta(tickDelta());
+
+        final Quaternionf rotation = RotationAxis.POSITIVE_X.rotation(45.0F * 1);
 
         stack.push();
         stack.translate(xPivot, yPivot, zPivot);

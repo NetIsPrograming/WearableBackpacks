@@ -51,7 +51,7 @@ public final class BackpackServerNetwork implements ModInitializer {
                 });
 
         EntityTrackingEvents.START_TRACKING.register((entity, player) -> {
-            if (entity instanceof LivingEntity) {
+            if (entity instanceof ServerPlayerEntity) {
                 final ByteBuf buf = Unpooled.buffer(Integer.BYTES * 2, Integer.BYTES * 2);
                 buf.writeInt(entity.getId());
                 buf.writeInt(BackpackWearer.getBackpackState((LivingEntity) entity).openCount());

@@ -224,9 +224,14 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
 
     @Override
     public @Nullable BlockState getPlacementState(final ItemPlacementContext context) {
-        final Direction facing = context.getPlayerLookDirection().getOpposite();
+        Direction facing = context.getPlayerLookDirection().getOpposite();
+        if ( facing.getAxis().isVertical() ) {
+            facing = Direction.EAST; // you cannot place it up or down :(
+        }
         final Fluid fluid = context.getWorld().getFluidState(context.getBlockPos()).getFluid();
+
         return this.getDefaultState().with(FACING, facing).with(WATERLOGGED, fluid == Fluids.WATER);
+        //return super.getPlacementState(context).with(Properties.HORIZONTAL_FACING, context.getPlayerLookDirection().getOpposite());
     }
 
     @Override
@@ -312,7 +317,7 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
             return item.getColor(DyeableItem.blendAndSetColor(tmp, ImmutableList.of(dye)));
         }
         // noinspection ConstantConditions
-        return ((DyeColorAccessor) (Object) dye.getColor()).getColor();
+        return dye.getColor().getFireworkColor();
     }
 
     private ItemStack getPickStack(

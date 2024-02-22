@@ -14,7 +14,6 @@ import static dev.sapphic.wearablebackpacks.BackpackMod.OPEN_OWN_BACKPACK;
 
 public final class BackpackClientNetwork implements ClientModInitializer {
 
-
     private static final PacketByteBuf EMPTY_BUFFER = new PacketByteBuf(Unpooled.EMPTY_BUFFER);
 
     public static void tryOpenOwnBackpack() {

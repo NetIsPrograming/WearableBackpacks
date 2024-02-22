@@ -24,8 +24,12 @@ public final class BackpackScreen extends HandledScreen<BackpackScreenHandler> {
         this.playerInventoryTitleY = this.backgroundHeight - 94;
     }
 
+    private static void drawTextureSpecial(int x, int y, int z, int w, int h, float u, float v, int rw, int rh, DrawContext ctx) {
+        ctx.drawTexture(BackpackScreen.TEXTURE, x, x + w, y, y + h, z, rw, rh, u, v, 64, 64);
+    }
+
     @Override
-    protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
+    protected void drawBackground(DrawContext ctx, float delta, int mouseX, int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         //MatrixStack matrixStack = context.getMatrices();
@@ -37,21 +41,21 @@ public final class BackpackScreen extends HandledScreen<BackpackScreenHandler> {
         final int fillW = this.backgroundWidth - (4 * 2);
         final int fillH = this.backgroundHeight - (4 * 2);
 
-        context.drawTexture(TEXTURE, this.x, this.y, 0, 18.0F, 0.0F, 4, 10, 64, 64); // TOP LEFT
-        context.drawTexture(TEXTURE, bgW - 4, this.y, 0, 18.0F + 14.0F, 0.0F, 4, 10, 64, 64); // TOP RIGHT
-        context.drawTexture(TEXTURE, this.x, bgH - 4, 0, 18.0F, 14.0F, 4, 10, 64, 64); //BOTTOM LEFT
-        context.drawTexture(TEXTURE, bgW - 4, bgH - 4, 0, 18.0F + 14.0F, 14.0F, 4, 10, 64, 64); // BOTTOM RIGHT
+        ctx.drawTexture(TEXTURE, this.x, this.y, 0, 18.0F, 0.0F, 4, 10, 64, 64); // TOP LEFT
+        ctx.drawTexture(TEXTURE, bgW - 4, this.y, 0, 18.0F + 14.0F, 0.0F, 4, 10, 64, 64); // TOP RIGHT
+        ctx.drawTexture(TEXTURE, this.x, bgH - 4, 0, 18.0F, 14.0F, 4, 10, 64, 64); //BOTTOM LEFT
+        ctx.drawTexture(TEXTURE, bgW - 4, bgH - 4, 0, 18.0F + 14.0F, 14.0F, 4, 10, 64, 64); // BOTTOM RIGHT
 
-        context.drawTexture(TEXTURE, this.x + 4, this.y, 0, fillW, 4, 18 + 4, 0, 10, 4, 64, 64); // TOP
-        context.drawTexture(TEXTURE, this.x, this.y + 4, 0, 4, fillH, 18, 4, 4, 10, 64, 64); // LEFT
-        context.drawTexture(TEXTURE, this.x + 4, bgH - 4, 0, fillW, 4, 18 + 4, 14, 10, 4, 64, 64); // BOTTOM
-        context.drawTexture(TEXTURE, bgW - 4, this.y + 4, 0, 4, fillH, 18 + 14, 4, 4, 10, 64, 64); // RIGHT
-        context.drawTexture(TEXTURE, this.x + 4, this.y + 4, 0, fillW, fillH, 22, 4, 10, 10, 64, 64); // FILL
+        drawTextureSpecial(this.x + 4, this.y, 0, fillW, 4, 18 + 4, 0, 10, 4, ctx); // TOP
+        drawTextureSpecial(this.x, this.y + 4, 0, 4, fillH, 18, 4, 4, 10, ctx); // LEFT
+        drawTextureSpecial(this.x + 4, bgH - 4, 0, fillW, 4, 18 + 4, 14, 10, 4, ctx); // BOTTOM
+        drawTextureSpecial(bgW - 4, this.y + 4, 0, 4, fillH, 18 + 14, 4, 4, 10, ctx); // RIGHT
+        drawTextureSpecial(this.x + 4, this.y + 4, 0, fillW, fillH, 22, 4, 10, 10, ctx); // FILL
 
         for (final Slot slot : this.getScreenHandler().slots) {
             final int x = (this.x + slot.x) - 1;
             final int y = (this.y + slot.y) - 1;
-            context.drawTexture(TEXTURE, x, y, 0, 0.0F, 0.0F, 18, 18, 64, 64);
+            ctx.drawTexture(TEXTURE, x, y, 0, 0.0F, 0.0F, 18, 18, 64, 64);
         }
     }
 

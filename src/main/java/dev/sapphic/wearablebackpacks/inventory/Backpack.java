@@ -4,6 +4,7 @@ import dev.sapphic.wearablebackpacks.BackpackOptions;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.item.DyeItem;
 import net.minecraft.item.DyeableItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -82,7 +83,9 @@ public interface Backpack {
     }
 
     static void setColor(final ItemStack stack, final int color) {
-        ((DyeableItem) stack.getItem()).setColor(stack, color & 0xFFFFFF);
+        if (stack.getItem() instanceof DyeableItem) {
+            ((DyeableItem) stack.getItem()).setColor(stack, color & 0xFFFFFF);
+        }
     }
 
     static void removeColor(final ItemStack stack) {

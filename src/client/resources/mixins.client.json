@@ -13,7 +13,6 @@
     "MinecraftClientMixin",
     "ModelLoaderAccessor"
   ],
-  "refmap": "mixins/wearablebackpacks/refmap.json",
   "injectors": {
     "defaultRequire": 1
   }

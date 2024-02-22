@@ -13,32 +13,42 @@ import net.minecraft.client.render.block.BlockModels;
 import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.AxisDirection;
 
+import net.minecraft.util.math.RotationAxis;
 import org.joml.Quaternionf;
 
 
 public final class BackpackBlockRenderer implements BlockEntityRenderer<BackpackBlockEntity> {
 
-    public BackpackBlockRenderer(final BlockEntityRenderDispatcher dispatcher) {
+    private final BlockRenderManager renderManager;
+    private final BlockModels models;
+    private final BlockModelRenderer blockModelRenderer;
+
+    public BackpackBlockRenderer(BlockEntityRendererFactory.Context ctx) {
         super();
+        this.renderManager = ctx.getRenderManager();
+        this.models = renderManager.getModels();
+        this.blockModelRenderer = renderManager.getModelRenderer();
     }
 
     @Override
-    public void render(final BackpackBlockEntity backpack, final float tickDelta, final MatrixStack stack, final VertexConsumerProvider pipelines, final int light, final int overlay) {
+    public void render(BackpackBlockEntity backpack, float tickDelta, MatrixStack stack, VertexConsumerProvider pipelines, int light, int overlay) {
         final Direction facing = backpack.getCachedState().get(BackpackBlock.FACING);
-        final BlockRenderManager manager = MinecraftClient.getInstance().getBlockRenderManager();
-        final BlockModels models = manager.getModels();
-        final BlockModelRenderer renderer = manager.getModelRenderer();
+        //final BlockRenderManager manager = MinecraftClient.getInstance().getBlockRenderManager();
+        //final BlockModels models = manager.getModels();
+        //final BlockModelRenderer renderer = manager.getModelRenderer();
         final VertexConsumer pipeline = ItemRenderer.getDirectItemGlintConsumer(pipelines, TexturedRenderLayers.getEntityCutout(), true, backpack.hasGlint());
         final BakedModel backpackModel = models.getModel(backpack.getCachedState());
         final BakedModel lidModel = models.getModelManager().getModel(BackpacksClient.getLidModel(facing));
         //final Vector3f unitVector = facing.rotateYClockwise().getUnitVector();
-        final Quaternionf rotation = facing.rotateYClockwise().getRotationQuaternion().mul(45.0F * backpack.getLidDelta(tickDelta));
+        //final Quaternionf rotation = facing.rotateYClockwise().getRotationQuaternion().mul(45.0F * backpack.getLidDelta(tickDelta));
+        Quaternionf rotation = RotationAxis.POSITIVE_Y.rotation(45.0F * backpack.getLidDelta(tickDelta));
 
         final int color = backpack.getColor();
         final float red = ((color >> 16) & 0xFF) / 255.0F;
@@ -51,13 +61,14 @@ public final class BackpackBlockRenderer implements BlockEntityRenderer<Backpack
         final double yPivot = 0.5625;
         final double zPivot = (inverse ? (1.0 - 0.3125) : 0.3125) * (xAxis ? 0.0 : 1.0);
 
-        renderer.render(stack.peek(), pipeline, null, backpackModel, red, green, blue, light, OverlayTexture.DEFAULT_UV);
+        blockModelRenderer.render(stack.peek(), pipeline, null, backpackModel, red, green, blue, light, OverlayTexture.DEFAULT_UV);
 
         stack.push();
         stack.translate(xPivot, yPivot, zPivot);
         stack.multiply(rotation);
         stack.translate(-xPivot, -yPivot, -zPivot);
-        renderer.render(stack.peek(), pipeline, null, lidModel, red, green, blue, light, OverlayTexture.DEFAULT_UV);
+        blockModelRenderer.render(stack.peek(), pipeline, null, lidModel, red, green, blue, light, OverlayTexture.DEFAULT_UV);
         stack.pop();
     }
 }
+

@@ -20,6 +20,7 @@ import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
+import org.apache.logging.log4j.Logger;
 
 public final class BackpackMod implements ModInitializer {
     public static final String ID = "wearablebackpacks";
