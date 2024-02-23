@@ -8,8 +8,8 @@ import net.minecraft.stat.Stats;
 import net.minecraft.util.Identifier;
 
 public final class BackpackStats implements ModInitializer {
-    public static final Identifier OPENED = new Identifier(BackpackMod.ID, "backpacks_opened");
-    public static final Identifier CLEANED = new Identifier(BackpackMod.ID, "backpacks_cleaned");
+    public static final Identifier OPENED = new Identifier(BackpackMod.MOD_ID, "backpacks_opened");
+    public static final Identifier CLEANED = new Identifier(BackpackMod.MOD_ID, "backpacks_cleaned");
 
     private static void register(final Identifier stat) {
         Stats.CUSTOM.getOrCreateStat(Registry.register(Registries.CUSTOM_STAT, stat, stat));

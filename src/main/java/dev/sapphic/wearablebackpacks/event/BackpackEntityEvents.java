@@ -24,9 +24,7 @@ public final class BackpackEntityEvents implements ModInitializer {
     public static final double MIN_REQUIRED_DISTANCE = 1.8;
     public static final double ANGLE_BOUNDS = 110;
 
-    private static ActionResult tryPlaceBackpack(
-            final PlayerEntity player, final World world, final Hand hand, final BlockHitResult hit
-    ) {
+    private static ActionResult tryPlaceBackpack(final PlayerEntity player, final World world, final Hand hand, final BlockHitResult hit) {
         if (player.isSneaking() && player.getMainHandStack().isEmpty() && player.getOffHandStack().isEmpty()) {
             final ItemStack stack = player.getEquippedStack(EquipmentSlot.CHEST);
             if (stack.getItem() instanceof BackpackItem) {
@@ -42,21 +40,18 @@ public final class BackpackEntityEvents implements ModInitializer {
         return ActionResult.PASS;
     }
 
-    private static ActionResult tryOpenBackpack(
-            final PlayerEntity self, final World world, final Hand hand, final Entity wearer,
-            final @Nullable EntityHitResult hit
-    ) {
+    private static ActionResult tryOpenBackpack(final PlayerEntity self, final World world, final Hand hand, final Entity wearer, final @Nullable EntityHitResult hit) {
         if (!(wearer instanceof LivingEntity)) {
             return ActionResult.PASS;
         }
         final ItemStack stack = ((LivingEntity) wearer).getEquippedStack(EquipmentSlot.CHEST);
         if ((stack.getItem() instanceof BackpackItem) && canOpenBackpack(self, (LivingEntity) wearer)) {
             if (world.isClient) {
-                final float pitch = (self.getWorld().random.nextFloat() * 0.1F) + 0.9F;
+                float pitch = (self.getWorld().random.nextFloat() * 0.1F) + 0.9F;
                 self.playSound(SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.5F, pitch);
             } else {
                 self.openHandledScreen(WornBackpack.of((LivingEntity) wearer, stack));
-                BackpackWearer.getBackpackState((LivingEntity) wearer).opened();
+                BackpackWearer.getBackpackState((LivingEntity) wearer).setOpen(true);
             }
             return ActionResult.SUCCESS;
         }

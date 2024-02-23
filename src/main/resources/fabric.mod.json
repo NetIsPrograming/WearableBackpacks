@@ -13,8 +13,8 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "dev.sapphic.wearablebackpacks.client.BackpacksClient",
-      "dev.sapphic.wearablebackpacks.client.BackpackClientNetwork"
+      "dev.sapphic.wearablebackpacks.client.BackpackClientMod",
+      "dev.sapphic.wearablebackpacks.client.network.BackpackClientNetwork"
     ],
     "main": [
       "dev.sapphic.wearablebackpacks.BackpackMod",

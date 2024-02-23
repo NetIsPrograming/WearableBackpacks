@@ -54,7 +54,7 @@ public final class WornBackpack implements BackpackContainer {
         return new NamedScreenHandlerFactory() {
             @Override
             public Text getDisplayName() {
-                return backpack.hasCustomName() ? backpack.getName() : Text.translatable("container." + BackpackMod.ID);
+                return backpack.hasCustomName() ? backpack.getName() : Text.translatable("container." + BackpackMod.MOD_ID);
             }
 
             @Override
@@ -136,15 +136,15 @@ public final class WornBackpack implements BackpackContainer {
     }
 
     @Override
-    public void onClose(final PlayerEntity player) {
+    public void onClose(PlayerEntity player) {
         this.markDirty();
-        final LivingEntity source = (this.wearer != null) ? this.wearer : player;
+        LivingEntity source = (this.wearer != null) ? this.wearer : player;
         if (!source.getWorld().isClient) {
             source.getWorld().playSound(null, source.getX(), source.getY(), source.getZ(),
                     SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, source.getSoundCategory(),
                     0.5F, (source.getWorld().random.nextFloat() * 0.1F) + 0.9F
             );
-            BackpackWearer.getBackpackState(source).closed();
+            BackpackWearer.getBackpackState(source).setOpen(false);
         }
     }
 

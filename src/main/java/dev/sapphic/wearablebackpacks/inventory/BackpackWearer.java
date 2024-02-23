@@ -1,13 +1,12 @@
 package dev.sapphic.wearablebackpacks.inventory;
 
-import dev.sapphic.wearablebackpacks.BackpackLid;
+import dev.sapphic.wearablebackpacks.BackpackLidAnimator;
 import net.minecraft.entity.LivingEntity;
 
 public interface BackpackWearer {
-    static BackpackLid getBackpackState(final LivingEntity entity) {
-        //noinspection CastToIncompatibleInterface
+    static BackpackLidAnimator getBackpackState(LivingEntity entity) {
         return ((BackpackWearer) entity).getBackpackState();
     }
 
-    BackpackLid getBackpackState();
+    BackpackLidAnimator getBackpackState();
 }

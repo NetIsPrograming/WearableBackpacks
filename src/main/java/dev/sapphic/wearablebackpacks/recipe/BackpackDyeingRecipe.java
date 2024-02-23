@@ -29,7 +29,7 @@ import java.util.List;
  * to {@link BackpackItem} comparisons.
  */
 public final class BackpackDyeingRecipe extends SpecialCraftingRecipe {
-    public static final Identifier ID = new Identifier(BackpackMod.ID, "backpack_dyeing");
+    public static final Identifier ID = new Identifier(BackpackMod.MOD_ID, "backpack_dyeing");
 
     public static final SpecialRecipeSerializer<BackpackDyeingRecipe> SERIALIZER =
             new SpecialRecipeSerializer<>(((id, category) -> new BackpackDyeingRecipe(id)));

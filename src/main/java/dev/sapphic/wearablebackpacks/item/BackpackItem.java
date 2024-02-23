@@ -1,9 +1,9 @@
 package dev.sapphic.wearablebackpacks.item;
 
-import dev.sapphic.wearablebackpacks.inventory.Backpack;
 import dev.sapphic.wearablebackpacks.advancement.BackpackCriteria;
 import dev.sapphic.wearablebackpacks.block.BackpackBlock;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
+import dev.sapphic.wearablebackpacks.inventory.Backpack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.advancement.criterion.Criteria;
@@ -15,7 +15,10 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
+import net.minecraft.item.DyeableArmorItem;
+import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.network.ServerPlayerEntity;

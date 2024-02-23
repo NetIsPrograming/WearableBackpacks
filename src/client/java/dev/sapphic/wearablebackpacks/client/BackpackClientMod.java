@@ -2,25 +2,23 @@ package dev.sapphic.wearablebackpacks.client;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
-import dev.sapphic.wearablebackpacks.client.render.BackpackBlockRenderer;
-import dev.sapphic.wearablebackpacks.inventory.Backpack;
-import dev.sapphic.wearablebackpacks.inventory.BackpackWearer;
 import dev.sapphic.wearablebackpacks.BackpackMod;
 import dev.sapphic.wearablebackpacks.block.BackpackBlock;
 import dev.sapphic.wearablebackpacks.client.mixin.DualVertexConsumerAccessor;
 import dev.sapphic.wearablebackpacks.client.mixin.MinecraftClientAccessor;
 import dev.sapphic.wearablebackpacks.client.mixin.ModelLoaderAccessor;
+import dev.sapphic.wearablebackpacks.client.network.BackpackClientNetwork;
+import dev.sapphic.wearablebackpacks.client.render.BackpackBlockRenderer;
 import dev.sapphic.wearablebackpacks.client.screen.BackpackScreen;
+import dev.sapphic.wearablebackpacks.inventory.Backpack;
+import dev.sapphic.wearablebackpacks.inventory.BackpackWearer;
 import dev.sapphic.wearablebackpacks.item.BackpackItem;
-import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -48,9 +46,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.Identifier;
@@ -68,62 +64,20 @@ import java.util.Objects;
 import java.util.function.Function;
 
 @Environment(EnvType.CLIENT)
-public final class BackpacksClient implements ClientModInitializer {
-    public static final Identifier BACKPACK_STATE_CHANGED = new Identifier(BackpackMod.ID, "backpack_state_changed");
+public final class BackpackClientMod implements ClientModInitializer {
+    public static final Identifier BACKPACK_STATE_CHANGED = new Identifier(BackpackMod.MOD_ID, "backpack_state_changed");
 
-    private static final Identifier BACKPACK_LID = new Identifier(BackpackMod.ID, "backpack_lid");
-    private static final KeyBinding BACKPACK_KEY_BINDING = new KeyBinding("key." + BackpackMod.ID + ".backpack", GLFW.GLFW_KEY_B, "key.categories.inventory");
-
-    @Override
-    public void onInitializeClient() {
-        addLidStateDefinitions();
-
-        HandledScreens.register(BackpackMod.BACKPACK_SCREEN_HANDLER, BackpackScreen::new);
-
-        BlockEntityRendererFactories.register(BackpackMod.BLOCK_ENTITY, BackpackBlockRenderer::new);
-
-        KeyBindingHelper.registerKeyBinding(BACKPACK_KEY_BINDING);
-
-        ClientTickEvents.END_CLIENT_TICK.register(BackpacksClient::pollBackpackKey);
-
-        //Registry.register(Registries.BLOCK_ENTITY_TYPE, BackpackMod.ID, BackpackMod.BLOCK_ENTITY);
-
-        ColorProviderRegistry.BLOCK.register((state, world, pos, tint) -> Backpack.getColor(world, pos), BackpackMod.BLOCK);
-        ColorProviderRegistry.ITEM.register((stack, tint) -> Backpack.getColor(stack), BackpackMod.ITEM);
-
-        ClientPlayNetworking.registerGlobalReceiver(BACKPACK_STATE_CHANGED, (client, handler, buf, sender) -> {
-            final int entityId = buf.readInt();
-            final boolean opened = buf.readBoolean();
-            client.execute(() -> {
-                final @Nullable Entity entity = client.world.getEntityById(entityId);
-                if (!(entity instanceof BackpackWearer)) {
-                    throw new IllegalStateException(String.valueOf(entity));
-                }
-                if (opened) {
-                    ((BackpackWearer) entity).getBackpackState().opened();
-                } else {
-                    ((BackpackWearer) entity).getBackpackState().closed();
-                }
-            });
-        });
-    }
-
+    private static final Identifier BACKPACK_LID = new Identifier(BackpackMod.MOD_ID, "backpack_lid");
+    private static final KeyBinding BACKPACK_KEY_BINDING = new KeyBinding("key." + BackpackMod.MOD_ID + ".backpack", GLFW.GLFW_KEY_B, "key.categories.inventory");
     @SuppressWarnings("RedundantTypeArguments")
-    private static final ImmutableMap<Direction, ModelIdentifier> LID_MODELS = Arrays.stream(Direction.values())
-            .filter(Direction.Type.HORIZONTAL).collect(Maps.toImmutableEnumMap(Function.<Direction>identity(), facing ->
-                    new ModelIdentifier(BACKPACK_LID, String.format(Locale.ROOT, "facing=%s", facing.asString()))
-            ));
-
-    private static final PacketByteBuf EMPTY_PACKET_BUFFER = new PacketByteBuf(Unpooled.EMPTY_BUFFER);
+    private static final ImmutableMap<Direction, ModelIdentifier> LID_MODELS = Arrays.stream(Direction.values()).filter(Direction.Type.HORIZONTAL).collect(Maps.toImmutableEnumMap(Function.<Direction>identity(), facing -> new ModelIdentifier(BACKPACK_LID, String.format(Locale.ROOT, "facing=%s", facing.asString()))));
+    //private static final PacketByteBuf EMPTY_PACKET_BUFFER = new PacketByteBuf(Unpooled.EMPTY_BUFFER);
 
     public static ModelIdentifier getLidModel(final Direction facing) {
         return Objects.requireNonNull(LID_MODELS.getOrDefault(facing, ModelLoader.MISSING_ID));
     }
 
-    public static void renderBackpack(
-            final MatrixStack stack, final VertexConsumerProvider pipelines, final ItemStack backpack,
-            final LivingEntity entity, final int light, final BipedEntityModel<?> model
-    ) {
+    public static void renderBackpack(final MatrixStack stack, final VertexConsumerProvider pipelines, final ItemStack backpack, final LivingEntity entity, final int light, final BipedEntityModel<?> model) {
         final BlockRenderManager manager = MinecraftClient.getInstance().getBlockRenderManager();
         final BlockModels models = manager.getModels();
         final BlockModelRenderer renderer = manager.getModelRenderer();
@@ -185,13 +139,7 @@ public final class BackpacksClient implements ClientModInitializer {
     }
 
     private static void addLidStateDefinitions() {
-        ModelLoaderAccessor.setStaticDefinitions(
-                ImmutableMap.<Identifier, StateManager<Block, BlockState>>builder()
-                        .putAll(ModelLoaderAccessor.getStaticDefinitions())
-                        .put(BACKPACK_LID, new StateManager.Builder<Block, BlockState>(Blocks.AIR)
-                                .add(BackpackBlock.FACING).build(Block::getDefaultState, BlockState::new)
-                        ).build()
-        );
+        ModelLoaderAccessor.setStaticDefinitions(ImmutableMap.<Identifier, StateManager<Block, BlockState>>builder().putAll(ModelLoaderAccessor.getStaticDefinitions()).put(BACKPACK_LID, new StateManager.Builder<Block, BlockState>(Blocks.AIR).add(BackpackBlock.FACING).build(Block::getDefaultState, BlockState::new)).build());
     }
 
     private static void pollBackpackKey(final MinecraftClient client) {
@@ -205,6 +153,38 @@ public final class BackpacksClient implements ClientModInitializer {
                 }
             }
         }
+    }
+
+    @Override
+    public void onInitializeClient() {
+        addLidStateDefinitions();
+
+        HandledScreens.register(BackpackMod.BACKPACK_SCREEN_HANDLER, BackpackScreen::new);
+
+        BlockEntityRendererFactories.register(BackpackMod.BLOCK_ENTITY, BackpackBlockRenderer::new);
+
+        KeyBindingHelper.registerKeyBinding(BACKPACK_KEY_BINDING);
+
+        ClientTickEvents.END_CLIENT_TICK.register(BackpackClientMod::pollBackpackKey);
+
+        ColorProviderRegistry.BLOCK.register((state, world, pos, tint) -> Backpack.getColor(world, pos), BackpackMod.BLOCK);
+        ColorProviderRegistry.ITEM.register((stack, tint) -> Backpack.getColor(stack), BackpackMod.ITEM);
+
+        ClientPlayNetworking.registerGlobalReceiver(BACKPACK_STATE_CHANGED, (client, handler, buf, sender) -> {
+            final int entityId = buf.readInt();
+            final boolean opened = buf.readBoolean();
+            client.execute(() -> {
+                final @Nullable Entity entity = client.world.getEntityById(entityId);
+                if (!(entity instanceof ServerPlayerEntity)) {
+                    throw new IllegalStateException(String.valueOf(entity));
+                }
+                if (opened) {
+                    ((BackpackWearer) entity).getBackpackState().setOpen(true);
+                } else {
+                    ((BackpackWearer) entity).getBackpackState().setOpen(false);
+                }
+            });
+        });
     }
 
 

@@ -23,7 +23,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.util.Set;
 
 public final class CopyColorLootFunction extends ConditionalLootFunction {
-    public static final Identifier ID = new Identifier(BackpackMod.ID, "copy_color");
+    public static final Identifier ID = new Identifier(BackpackMod.MOD_ID, "copy_color");
 
     CopyColorLootFunction(final LootCondition[] conditions) {
         super(conditions);

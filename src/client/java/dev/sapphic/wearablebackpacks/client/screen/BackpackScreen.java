@@ -15,7 +15,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public final class BackpackScreen extends HandledScreen<BackpackScreenHandler> {
-    private static final Identifier TEXTURE = new Identifier(BackpackMod.ID, "textures/gui/container/backpack.png");
+    private static final Identifier TEXTURE = new Identifier(BackpackMod.MOD_ID, "textures/gui/container/backpack.png");
 
     public BackpackScreen(final BackpackScreenHandler menu, final PlayerInventory inventory, final Text name) {
         super(menu, inventory, name);

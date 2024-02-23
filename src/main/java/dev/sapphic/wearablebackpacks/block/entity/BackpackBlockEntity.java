@@ -1,13 +1,13 @@
 package dev.sapphic.wearablebackpacks.block.entity;
 
+import dev.sapphic.wearablebackpacks.BackpackLidAnimator;
 import dev.sapphic.wearablebackpacks.inventory.Backpack;
-import dev.sapphic.wearablebackpacks.BackpackLid;
 import dev.sapphic.wearablebackpacks.BackpackOptions;
 import dev.sapphic.wearablebackpacks.BackpackMod;
 import dev.sapphic.wearablebackpacks.inventory.BackpackContainer;
 import dev.sapphic.wearablebackpacks.inventory.BackpackScreenHandler;
-import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.LidOpenable;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -31,7 +31,7 @@ import net.minecraft.world.World;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-public final class BackpackBlockEntity extends LootableContainerBlockEntity implements Backpack, BackpackContainer, ScreenHandlerFactory {
+public class BackpackBlockEntity extends LootableContainerBlockEntity implements Backpack, BackpackContainer, ScreenHandlerFactory, LidOpenable {
 
     private static final int OPENS_DATA_TYPE = 0x0;
     private static final int COLOR_DATA_TYPE = 0x1;
@@ -39,16 +39,19 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
     private static final int GLINT_FLAG_TYPE = 0x3;
 
     private static final int DEFAULT_COLOR = 0xA06540;
-    private static final int NO_COLOR = 0xFFFFFF + 1;
+    // private static final int NO_COLOR = 0xFFFFFF + 1; // why have a no color state when you could just have a boolean?
+    private static boolean colored = false;
 
-    private final BackpackLid lid = new BackpackLid(o -> this.event(OPENS_DATA_TYPE, o.openCount()));
+    //private final BackpackLid lid = new BackpackLid(o -> this.event(OPENS_DATA_TYPE, o.openCount()));
+
+    private final BackpackLidAnimator lid = new BackpackLidAnimator();
 
     private int rows = BackpackOptions.DEFAULT_ROWS;
     private int columns = BackpackOptions.DEFAULT_COLUMNS;
     private @MonotonicNonNull DefaultedList<ItemStack> contents;
     private @Nullable NbtList enchantments;
 
-    private int color = NO_COLOR;
+    private int color = DEFAULT_COLOR;
 
     private boolean empty;
     private boolean enchanted;
@@ -58,9 +61,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, BackpackBlockEntity bbe) {
-        //  TODO: ticking logic
-
-        //lid.tick();
+        bbe.lid.step();
     }
 
     @Override
@@ -80,7 +81,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
 
     @Override
     public int getColor() {
-        if (this.color == NO_COLOR) {
+        if (!colored) {
             return DEFAULT_COLOR;
         }
         return this.color;
@@ -88,12 +89,13 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
 
     @Override
     public boolean hasColor() {
-        return this.color != NO_COLOR;
+        return colored;
     }
 
     @Override
     public void setColor(final int color) {
         if (this.color != (color & 0xFFFFFF)) {
+            colored = true;
             this.color = color & 0xFFFFFF;
             this.event(COLOR_DATA_TYPE, this.color);
             this.markDirty();
@@ -102,11 +104,12 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
 
     @Override
     public void clearColor() {
-        if (this.color != NO_COLOR) {
-            this.color = NO_COLOR;
-            this.event(COLOR_DATA_TYPE, NO_COLOR);
+        if (colored) {
+            this.color = DEFAULT_COLOR;
+            this.event(COLOR_DATA_TYPE, DEFAULT_COLOR);
             this.markDirty();
         }
+        colored = false;
     }
 
     @Override
@@ -115,8 +118,8 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
     }
 
     @Override
-    public float getLidDelta(final float tickDelta) {
-        return this.lid.lidDelta(tickDelta);
+    public float getLidDelta(float tickDelta) {
+        return this.lid.getProgress(tickDelta);
     }
 
     @Override
@@ -206,7 +209,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
             this.color = nbt.getInt("Color") & 0xFFFFFF;
         }
         if (nbt.contains("Enchantments", NbtElement.LIST_TYPE)) {
-            this.enchantments = nbt.getList("Enchantments", NbtType.COMPOUND);
+            this.enchantments = nbt.getList("Enchantments", NbtElement.COMPOUND_TYPE);
             this.enchanted = true;
         }
     }
@@ -231,7 +234,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
 
     @Override
     protected Text getContainerName() {
-        return Text.translatable("container." + BackpackMod.ID);
+        return Text.translatable("container." + BackpackMod.MOD_ID);
     }
 
     @Override
@@ -262,14 +265,14 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
     }
 
     @Override
-    public boolean onSyncedBlockEvent(final int type, final int data) {
+    public boolean onSyncedBlockEvent(int type, int data) {
         if (type == OPENS_DATA_TYPE) {
-            this.lid.count(data);
+            this.lid.setOpen(data > 0);
             return true;
         }
         if (type == COLOR_DATA_TYPE) {
-            if (data == NO_COLOR) {
-                this.color = NO_COLOR;
+            if (data == DEFAULT_COLOR) {
+                this.color = DEFAULT_COLOR;
             } else {
                 this.color = data & 0xFFFFFF;
             }
@@ -294,8 +297,8 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
     @Override
     public void onOpen(final PlayerEntity player) {
         if ((this.world != null) && !player.isSpectator()) {
-            this.lid.opened();
-            if (this.lid.isOpen()) {
+            this.lid.setOpen(true);
+            if (this.lid.getOpen()) {
                 this.world.playSound(null, this.pos, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER,
                         SoundCategory.BLOCKS, 0.5F, (this.world.random.nextFloat() * 0.1F) + 0.9F
                 );
@@ -306,8 +309,8 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
     @Override
     public void onClose(final PlayerEntity player) {
         if ((this.world != null) && !player.isSpectator()) {
-            this.lid.closed();
-            if (this.lid.isClosed()) {
+            this.lid.setOpen(false);
+            if (!this.lid.getOpen()) {
                 this.world.playSound(null, this.pos, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER,
                         SoundCategory.BLOCKS, 0.5F, (this.world.random.nextFloat() * 0.1F) + 0.9F
                 );
@@ -324,5 +327,10 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
         if (this.world instanceof ServerWorld) {
             this.world.addSyncedBlockEvent(this.pos, this.getCachedState().getBlock(), type, data);
         }
+    }
+
+    @Override
+    public float getAnimationProgress(float tickDelta) {
+        return lid.getProgress(tickDelta);
     }
 }

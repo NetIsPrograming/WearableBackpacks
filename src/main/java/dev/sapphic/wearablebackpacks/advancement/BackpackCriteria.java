@@ -10,7 +10,7 @@ public final class BackpackCriteria implements ModInitializer {
     public static final SimpleCriterion DYED = criterion("backpack_dyed");
 
     private static SimpleCriterion criterion(final String name) {
-        return new SimpleCriterion(new Identifier(BackpackMod.ID, name));
+        return new SimpleCriterion(new Identifier(BackpackMod.MOD_ID, name));
     }
 
     @Override

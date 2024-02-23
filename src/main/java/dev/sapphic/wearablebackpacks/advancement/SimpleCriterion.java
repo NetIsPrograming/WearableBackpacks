@@ -20,17 +20,9 @@ public final class SimpleCriterion extends AbstractCriterion<SimpleCriterion.Con
         return this.id;
     }
 
-    public void trigger(final ServerPlayerEntity player) {
+    public void trigger(ServerPlayerEntity player) {
         this.trigger(player, conditions -> true);
     }
-
-  /*@Override
-  protected Conditions conditionsFromJson(
-    final JsonObject json, final EntityPredicate predicate,
-    final AdvancementEntityPredicateDeserializer deserializer
-  ) {
-    return new Conditions(predicate);
-  }*/
 
     @Override
     protected Conditions conditionsFromJson(JsonObject obj, LootContextPredicate playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {

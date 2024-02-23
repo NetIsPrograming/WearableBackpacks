@@ -1,3 +1,16 @@
+# Note to anyone who finds this fork
+
+There is only a couple of problems that I don't personally feel like fixing if you do make a
+pull request please current issues are:
+
+**Lid not opening and closing,**
+
+**Backpacks default color is purple,**
+
+**and organization.**
+
+However, the mod mostly runs fine and doesn't crash the server or client anymore (no promisses ;3).
+
 # Wearable Backpacks
 
 .. is a Minecraft mod which adds **backpacks**. But wait! It's not like anything you've

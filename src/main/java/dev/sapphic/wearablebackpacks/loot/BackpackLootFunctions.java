@@ -11,7 +11,7 @@ public final class BackpackLootFunctions implements ModInitializer {
     public static final LootFunctionType COPY_COLOR = new LootFunctionType(CopyColorLootFunction.serializer());
 
     private static void register(final String name, final LootFunctionType type) {
-        Registry.register(Registries.LOOT_FUNCTION_TYPE, new Identifier(BackpackMod.ID, name), type);
+        Registry.register(Registries.LOOT_FUNCTION_TYPE, new Identifier(BackpackMod.MOD_ID, name), type);
     }
 
     @Override

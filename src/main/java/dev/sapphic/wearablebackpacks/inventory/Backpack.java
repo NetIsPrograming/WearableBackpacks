@@ -8,6 +8,7 @@ import net.minecraft.item.DyeItem;
 import net.minecraft.item.DyeableItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
@@ -60,7 +61,7 @@ public interface Backpack {
 
     static int getRows(final ItemStack backpack) {
         final @Nullable NbtCompound nbt = backpack.getSubNbt("BlockEntityTag");
-        if ((nbt != null) && nbt.contains(ROWS, NbtType.INT)) {
+        if ((nbt != null) && nbt.contains(ROWS, NbtElement.INT_TYPE)) {
             return BackpackOptions.getRows(nbt.getInt(ROWS));
         }
         return getExpectedRows();
@@ -68,7 +69,7 @@ public interface Backpack {
 
     static int getColumns(final ItemStack backpack) {
         final @Nullable NbtCompound nbt = backpack.getSubNbt("BlockEntityTag");
-        if ((nbt != null) && nbt.contains(COLUMNS, NbtType.INT)) {
+        if ((nbt != null) && nbt.contains(COLUMNS, NbtElement.INT_TYPE)) {
             return BackpackOptions.getColumns(nbt.getInt(COLUMNS));
         }
         return getExpectedColumns();
@@ -106,8 +107,8 @@ public interface Backpack {
         // Minor optimizations over Inventories#readNbt
         final @Nullable NbtCompound nbt = backpack.getSubNbt("BlockEntityTag");
 
-        if ((nbt != null) && nbt.contains("Items", NbtType.LIST)) {
-            final NbtList items = nbt.getList("Items", NbtType.COMPOUND);
+        if ((nbt != null) && nbt.contains("Items", NbtElement.LIST_TYPE)) {
+            final NbtList items = nbt.getList("Items", NbtElement.COMPOUND_TYPE);
             final DefaultedList<ItemStack> stacks = DefaultedList.ofSize(items.size(), ItemStack.EMPTY);
 
             for (int index = 0; index < items.size(); index++) {
@@ -126,8 +127,8 @@ public interface Backpack {
         // Short-circuiting deserialization
         final @Nullable NbtCompound nbt = backpack.getSubNbt("BlockEntityTag");
 
-        if ((nbt != null) && nbt.contains("Items", NbtType.LIST)) {
-            final NbtList items = nbt.getList("Items", NbtType.COMPOUND);
+        if ((nbt != null) && nbt.contains("Items", NbtElement.LIST_TYPE)) {
+            final NbtList items = nbt.getList("Items", NbtElement.COMPOUND_TYPE);
 
             for (int index = 0; index < items.size(); index++) {
                 final NbtCompound item = items.getCompound(index);

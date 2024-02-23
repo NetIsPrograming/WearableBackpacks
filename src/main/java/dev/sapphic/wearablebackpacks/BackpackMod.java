@@ -8,7 +8,6 @@ import dev.sapphic.wearablebackpacks.recipe.BackpackDyeingRecipe;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
@@ -20,12 +19,15 @@ import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class BackpackMod implements ModInitializer {
-    public static final String ID = "wearablebackpacks";
+    public static final String MOD_ID = "wearablebackpacks";
 
-    private static final Identifier backpack = new Identifier(ID, "backpack");
+    private static final Identifier backpack = new Identifier(MOD_ID, "backpack");
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     public static final Block BLOCK = new BackpackBlock(FabricBlockSettings.create().mapColor(MapColor.CLEAR).strength(0.5F, 0.5F).sounds(BlockSoundGroup.WOOL));
     public static final BlockEntityType<BackpackBlockEntity> BLOCK_ENTITY = FabricBlockEntityTypeBuilder.create(BackpackBlockEntity::new, BLOCK).build();
@@ -33,17 +35,18 @@ public final class BackpackMod implements ModInitializer {
 
     public static final ScreenHandlerType<BackpackScreenHandler> BACKPACK_SCREEN_HANDLER = new ScreenHandlerType<>(BackpackScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 
-    public static final Identifier OPEN_OWN_BACKPACK = new Identifier(ID, "open_own_backpack");
+    public static final Identifier OPEN_OWN_BACKPACK = new Identifier(MOD_ID, "open_own_backpack");
 
-    public static final Identifier BACKPACK_UPDATED = new Identifier(ID, "backpack_updated");
+    public static final Identifier BACKPACK_UPDATED = new Identifier(MOD_ID, "backpack_updated");
 
     @Override
     public void onInitialize() {
-        BackpackOptions.init(FabricLoader.getInstance().getConfigDir().resolve(ID + ".json"));
+        BackpackOptions.init(FabricLoader.getInstance().getConfigDir().resolve(MOD_ID + ".json"));
 
         Registry.register(Registries.BLOCK, backpack, BLOCK);
         Registry.register(Registries.BLOCK_ENTITY_TYPE, backpack, BLOCK_ENTITY);
         Registry.register(Registries.ITEM, backpack, ITEM);
+
         //  Too hacky
         //  Item.BLOCK_ITEMS.put(BLOCK, ITEM);
 
